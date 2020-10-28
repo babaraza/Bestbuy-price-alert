@@ -6,9 +6,9 @@ import os
 load_dotenv()
 
 
-class Watch:
+class Product:
     """
-    Class to hold the Watch data for each watch result
+    Class to hold the product data for each product result
     """
 
     def __init__(self, title, image, product_link_api, product_link, cart_link, price):
@@ -21,7 +21,7 @@ class Watch:
 
     def create_link(self):
         """
-        Returns the formatted url for Watch link
+        Returns the formatted url for Product link
         """
         return f"<a href='{self.link}'>Link</a>"
 
@@ -37,8 +37,8 @@ api_url = f'https://api.bestbuy.com/beta/products/openBox(sku%20in({skus}))'
 headers = {'Content-Type': 'application/json'}
 params = {'apiKey': os.getenv('BESTBUY_KEY')}
 
-# List to hold all the watch results
-watches = []
+# List to hold all the Product results
+products = []
 
 
 def get_data():
@@ -52,25 +52,25 @@ def get_data():
         for offer in result['offers']:
             prices.append(offer['prices']['current'])
         if min(prices) < os.getenv('MAX_PRICE'):
-            watch_raw = Watch(title=result['names']['title'],
-                              image=result['images']['standard'],
-                              product_link_api=result['links']['product'],
-                              product_link=result['links']['web'],
-                              cart_link=result['links']['addToCart'],
-                              price=min(prices))
-            watches.append(watch_raw)
+            product_raw = Product(title=result['names']['title'],
+                                image=result['images']['standard'],
+                                product_link_api=result['links']['product'],
+                                product_link=result['links']['web'],
+                                cart_link=result['links']['addToCart'],
+                                price=min(prices))
+            products.append(product_raw)
 
 
 def prepare_data():
     raw_string = ''
 
-    # Iterating over watches list
-    for watch in watches:
-        raw_string += f'<tr><td><img src="{watch.image}" style="width:40%;height:40%;"></td>' \
-                      f'<td>{watch.title}</td>' \
-                      f'<td>${watch.price}</td>' \
-                      f'<td>{watch.create_link()}</td>' \
-                      f'<td>{watch.add_to_cart()}</td></tr>'
+    # Iterating over product list
+    for product in products:
+        raw_string += f'<tr><td><img src="{product.image}" style="width:40%;height:40%;"></td>' \
+                      f'<td>{product.title}</td>' \
+                      f'<td>${product.price}</td>' \
+                      f'<td>{product.create_link()}</td>' \
+                      f'<td>{product.add_to_cart()}</td></tr>'
     return raw_string
 
 
